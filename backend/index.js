@@ -32,12 +32,11 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware
-app.use(bodyParser.json()); // Parse JSON requests
-app.use(cors()); // Enable CORS for cross-origin requests
+app.use(bodyParser.json());
+app.use(cors()); 
 
-// Connect to MongoDB
 mongoose.connect(MONGO_URI, {
-  serverSelectionTimeoutMS: 50000, // Timeout for connection
+  serverSelectionTimeoutMS: 50000, 
 })
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch((error) => {
