@@ -17,9 +17,18 @@ class BlogPost {
     try {
       const blogPost = await BlogPostModel.findByIdAndDelete(req.params.postID);
       if (!blogPost) {
-        return res.status(404).json({ message: 'Blog post not found' });
+        return res.status(404).json({ message: "Blog post not found" });
       }
-      res.status(200).json({ message: 'Blog post deleted' });
+      res.status(200).json({ message: "Blog post deleted" });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  static async getAllPosts(req, res) {
+    try {
+      const blogPosts = await BlogPostModel.find();
+      res.status(200).json(blogPosts);
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
@@ -30,7 +39,7 @@ class BlogPost {
     try {
       const blogPost = await BlogPostModel.findById(req.params.postID);
       if (!blogPost) {
-        return res.status(404).json({ message: 'Blog post not found' });
+        return res.status(404).json({ message: "Blog post not found" });
       }
       blogPost.title = req.body.title;
       blogPost.content = req.body.content;
@@ -48,7 +57,7 @@ class BlogPost {
     try {
       const blogPost = await BlogPostModel.findById(req.params.postID);
       if (!blogPost) {
-        return res.status(404).json({ message: 'Blog post not found' });
+        return res.status(404).json({ message: "Blog post not found" });
       }
       blogPost.publishDate = new Date();
       await blogPost.save();
@@ -57,17 +66,6 @@ class BlogPost {
       res.status(400).json({ message: error.message });
     }
   }
-  // Get all blog posts
-static async getAllPosts(req, res) {
-  try {
-    const blogPosts = await BlogPostModel.find();
-    res.status(200).json(blogPosts);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-}
-  
-
 }
 
 module.exports = BlogPost;
