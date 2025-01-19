@@ -6,13 +6,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 
 // Import routes
 const eventRoutes = require('./routes/EventRoutes');
 const historicalEventRoutes = require('./routes/HistoricalEventRoutes');
 const culturalEventRoutes = require('./routes/CulturalEventRoutes');
 const discoverETRoutes = require('./routes/DiscoverETRoutes');
-const adminRoutes = require('./routes/AdminRoutes'); // Declare adminRoutes once
+const adminRoutes = require('./routes/AdminRoutes');
 const newsEmailRoutes = require('./routes/NewsEmailRoutes');
 const destinationRoutes = require('./routes/DestinationRoutes');
 const blogPostRoutes = require('./routes/BlogPostRoutes');
@@ -33,23 +34,32 @@ const MONGO_URI = "mongodb://localhost:27017/";
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors()); 
+app.use(cors());
 
+// Serve static files from the frontend folder
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
+// Route to serve the index.html file from the home-page folder
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'home-page', 'index.html'));
+});
+
+// Connect to MongoDB
 mongoose.connect(MONGO_URI, {
-  serverSelectionTimeoutMS: 50000, 
+  serverSelectionTimeoutMS: 50000,
 })
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
-   // Exit the application if connection fails
+    // Exit the application if connection fails
   });
 
 // Define a test route
-app.get('/', (req, res) => {
+app.get('/test', (req, res) => {
   res.send('Server is up and running!');
 });
 
-// Use routes
+// Use API routes
 app.use('/api/events', eventRoutes);
 app.use('/api/historicalEvents', historicalEventRoutes);
 app.use('/api/culturalEvents', culturalEventRoutes);
@@ -61,7 +71,7 @@ app.use('/api/tripPlans', tripPlanRoutes);
 app.use('/api/blogManagers', blogManagerRoutes);
 app.use('/api/accounts', accountRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/admins', adminRoutes); // Correctly include adminRoutes
+app.use('/api/admins', adminRoutes);
 app.use('/api/feedbacks', feedbackRoutes);
 
 // Start the server
