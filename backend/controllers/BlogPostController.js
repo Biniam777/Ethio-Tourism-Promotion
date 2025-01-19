@@ -66,6 +66,7 @@ static async getAllPosts(req, res) {
     res.status(400).json({ message: error.message });
   }
 }
+  
 
 }
 
