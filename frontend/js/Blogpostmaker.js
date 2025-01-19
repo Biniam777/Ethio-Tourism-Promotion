@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const postForm = document.getElementById("postForm");
 
@@ -38,10 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         const result = await response.json();
-        alert("Post created successfully!");
-        postForm.reset(); 
-        console.log(result); 
-        window.location.href = "/blog.html"; 
+
+        postForm.reset();
+        console.log(result);
+        window.location.href = "../../frontend/blogpost.html";
       } else {
         const error = await response.json();
         alert(`Error: ${error.message}`);

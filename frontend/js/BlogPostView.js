@@ -48,5 +48,5 @@ async function fetchPosts() {
   }
 }
 
-// Call the function to fetch and display posts when the page loads
+
 window.onload = fetchPosts;

@@ -1,93 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Travel Plans</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <style>
-      body {
-        margin: 0;
-        font-family: 'Poppins', sans-serif;
-        background-color: #f1f6ee;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Travel Plans</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+  <link rel="stylesheet" href="css/destination.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: rgb(248, 253, 248);
+    }
 
-      .container {
-        margin-top: 50px;
-      }
+    .container {
+      margin-top: 50px;
+    }
 
-      .table {
-        margin-top: 20px;
-      }
+    .table {
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden; /* Ensures child elements respect the border radius */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adjust shadow color for better visibility */
+  border: 2px solid rgb(120, 126, 120); /* Proper border styling */
+  background-color: #cfd0cf; /* Ensure the background contrasts with the shadow */
+}
 
-      th {
-        background-color: #1f4529;
-        color: white;
-      }
 
-      tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
 
-      tr:nth-child(odd) {
-        background-color: #e7f7e1;
-      }
 
-      .btn-view {
-        background-color: #1f4529;
-        color: white;
-      }
 
-      .btn-view:hover {
-        background-color: #145e3b;
-      }
+    th {
+      background-color: #404140;
+      color: white;
+      border-bottom: 2px solid #ddd;
+    }
 
-      .btn {
-        margin: 0 5px;
-      }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
 
-      .heading {
-        text-align: center;
-        font-size: 32px;
-        color: #1f4529;
-        margin-bottom: 30px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2 class="heading">Your Travel Plans</h2>
+    tr:nth-child(odd) {
+      background-color: #e7f7e1;
+    }
 
-      <table class="table table-striped">
-        <thead>
-          <tr>
-           
-            <th>Trip Title</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Destinations</th>
-            
-          </tr>
-        </thead>
-        <tbody id="plansTableBody">
-          <!-- Table data will be populated here by JS -->
-        </tbody>
-      </table>
+    td {
+      vertical-align: middle;
+    }
+
+     .table-hover tbody tr:hover td {
+      background-color: #f6f8f6;
+    }
+    .btn-view {
+      background-color: #1f4529;
+      color: white;
+      border-radius: 5px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    .btn-view:hover {
+      background-color: #145e3b;
+    }
+
+    .btn {
+      margin: 0 5px;
+    }
+
+    .heading {
+      text-align: center;
+      font-size: 32px;
+      color: #1f4529;
+      margin-bottom: 30px;
+    }
+
+   
+
+    .add-button {
+      background-color: #26771e; /* Black background */
+      color: white; /* White text */
+      border: none;
+      border-radius: 50%; /* Circular button */
+      width: 50px; /* Button size */
+      height: 50px;
+      font-size: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(183, 182, 182, 0.2); /* Subtle shadow */
+      transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+      position: fixed;
+      bottom: 20px; /* Position at the bottom-right */
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .add-button:hover {
+      background-color: #333333; /* Slightly lighter black on hover */
+      transform: scale(1.1); /* Slightly enlarge on hover */
+    }
+
+    .add-button:focus {
+      outline: none; /* Remove focus outline */
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg " style=" padding:20px">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand" href="#">Ethiopia</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navigation"
+        aria-controls="navigation"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navigation">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="./home-page/index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="./event-page/event.html">Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="Destinations.html">Destinations</a></li>
+          <li class="nav-item"><a class="nav-link" href="planner.html">Planner</a></li>
+          <li class="nav-item"><a class="nav-link" href="./blogpost.html">Blog</a></li>
+        </ul>
+      </div>
     </div>
-    <div>
-      <button><a href="planner_make.html">Add planer</a></button>
-    </div>
+  </nav>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="js/viewplan.js"></script>
-  </body>
+  <div class="container">
+    <h2 class="heading">Your Travel Plans</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Trip Title</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Destinations</th>
+        </tr>
+      </thead>
+      <tbody id="plansTableBody">
+        <!-- Table data will be populated here by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <button class="add-button" onclick="window.location.href='planner_make.html';">+</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="js/viewplan.js"></script>
+</body>
 </html>
