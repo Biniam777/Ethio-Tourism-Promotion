@@ -10,7 +10,7 @@ class Account {
     this.username = username;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.role = role || 'user';  // Default to 'user' if no role is provided
+    this.role = role || "user"; // Default to 'user' if no role is provided
   }
 
   // Create a new account (sign up)
@@ -21,14 +21,14 @@ class Account {
       // Check if the user already exists
       const existingAccount = await AccountModel.findOne({ email });
       if (existingAccount) {
-        return res.status(400).json({ message: 'Email is already taken' });
+        return res.status(400).json({ message: "Email is already taken" });
       }
 
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Generate a unique accountID using UUID
-      const accountID = uuidv4();  // Generate unique UUID
+      const accountID = uuidv4(); // Generate unique UUID
 
       // Create a new account
       const account = new AccountModel({
@@ -45,28 +45,36 @@ class Account {
 
       // Generate an access token
       const accessToken = jwt.sign(
-        { accountID: account.accountID, email: account.email, role: account.role },  // Include role in the token
+        {
+          accountID: account.accountID,
+          email: account.email,
+          role: account.role,
+        }, // Include role in the token
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: "1h" }
       );
 
       // Generate a refresh token
       const refreshToken = jwt.sign(
-        { accountID: account.accountID, email: account.email, role: account.role },  // Include role in the token
+        {
+          accountID: account.accountID,
+          email: account.email,
+          role: account.role,
+        }, // Include role in the token
         process.env.JWT_REFRESH_SECRET,
-        { expiresIn: '7d' }
+        { expiresIn: "7d" }
       );
 
       // Optionally store the refresh token in a secure HttpOnly cookie (for client-side security)
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true, 
-        secure: process.env.NODE_ENV === 'production', // Use only in HTTPS in production
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Use only in HTTPS in production
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
       // Send the response without the password field
       res.status(201).json({
-        message: 'Account created successfully',
+        message: "Account created successfully",
         account: {
           accountID: account.accountID,
           username: account.username,
@@ -89,39 +97,47 @@ class Account {
       // Find the account by email
       const account = await AccountModel.findOne({ email });
       if (!account) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        return res.status(401).json({ message: "Invalid credentials" });
       }
 
       // Compare the provided password with the hashed password in the database
       const isMatch = await bcrypt.compare(password, account.password);
       if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+        return res.status(401).json({ message: "Invalid credentials" });
       }
 
       // Generate an access token
       const accessToken = jwt.sign(
-        { accountID: account.accountID, email: account.email, role: account.role },
+        {
+          accountID: account.accountID,
+          email: account.email,
+          role: account.role,
+        },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' } // 1 hour expiration for the access token
+        { expiresIn: "1h" } // 1 hour expiration for the access token
       );
 
       // Generate a refresh token
       const refreshToken = jwt.sign(
-        { accountID: account.accountID, email: account.email, role: account.role },
+        {
+          accountID: account.accountID,
+          email: account.email,
+          role: account.role,
+        },
         process.env.JWT_REFRESH_SECRET,
-        { expiresIn: '7d' } // 7 days expiration for the refresh token
+        { expiresIn: "7d" } // 7 days expiration for the refresh token
       );
 
       // Optionally store the refresh token in a secure HttpOnly cookie (for client-side security)
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true, 
-        secure: process.env.NODE_ENV === 'production', // Use only in HTTPS in production
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Use only in HTTPS in production
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
       // Send the access token to the client
       res.status(200).json({
-        message: 'Login successful',
+        message: "Login successful",
         accessToken, // Send the access token
       });
     } catch (error) {
@@ -132,9 +148,11 @@ class Account {
   // Middleware to verify the JWT access token
   static verifyToken(req, res, next) {
     try {
-      const token = req.headers.authorization?.split(' ')[1]; // Get token from Authorization header
+      const token = req.headers.authorization?.split(" ")[1]; // Get token from Authorization header
       if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: No token provided' });
+        return res
+          .status(401)
+          .json({ message: "Unauthorized: No token provided" });
       }
 
       // Verify the access token
@@ -142,7 +160,7 @@ class Account {
       req.user = decoded; // Attach decoded user info to the request object
       next();
     } catch (error) {
-      res.status(401).json({ message: 'Unauthorized: Invalid token' });
+      res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
   }
 
@@ -152,7 +170,7 @@ class Account {
       const refreshToken = req.cookies.refreshToken; // Get the refresh token from cookies
 
       if (!refreshToken) {
-        return res.status(401).json({ message: 'No refresh token provided' });
+        return res.status(401).json({ message: "No refresh token provided" });
       }
 
       // Verify the refresh token
@@ -160,26 +178,37 @@ class Account {
 
       // Generate a new access token
       const accessToken = jwt.sign(
-        { accountID: decoded.accountID, email: decoded.email, role: decoded.role },
+        {
+          accountID: decoded.accountID,
+          email: decoded.email,
+          role: decoded.role,
+        },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: "1h" }
       );
 
       res.status(200).json({ accessToken }); // Send the new access token to the client
     } catch (error) {
-      res.status(403).json({ message: 'Invalid or expired refresh token' });
+      res.status(403).json({ message: "Invalid or expired refresh token" });
     }
   }
 
   // Get account details by email (for logged-in user)
   static async getAccountDetails(req, res) {
     try {
-      const { email } = req.user; // Use email from the token payload
+      const { email } = req.params; // Extract the email from the URL params
+
+      // Check if the email exists in the request
+      if (!email) {
+        return res
+          .status(400)
+          .json({ message: "Email is required in the URL" });
+      }
 
       // Find the account by email
       const account = await AccountModel.findOne({ email });
       if (!account) {
-        return res.status(404).json({ message: 'Account not found' });
+        return res.status(404).json({ message: "Account not found" });
       }
 
       // Return account details
@@ -193,8 +222,8 @@ class Account {
   static async getAllAccounts(req, res) {
     try {
       // Only allow access if the user has the right role (e.g., admin)
-      if (!req.user || req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Forbidden: Admins only' });
+      if (!req.user || req.user.role !== "admin") {
+        return res.status(403).json({ message: "Forbidden: Admins only" });
       }
 
       const accounts = await AccountModel.find();
@@ -207,8 +236,11 @@ class Account {
   // Log out of the account
   static logOut(req, res) {
     // Clear the refresh token from the cookies
-    res.clearCookie('refreshToken', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-    res.status(200).json({ message: 'Logged out successfully' });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
   }
 }
 

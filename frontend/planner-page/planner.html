@@ -3,54 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Trip Planner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="plan">
     <header class="header-sec">
         <div class="top">
-        <img src="images/logo.jpg"><a href ="home.html"></a>
-        <div class="hamburger-menu">
-            &#9776;
+            <img src="images/logo.jpg" alt="Logo"><a href="home.html"></a>
+            <div class="hamburger-menu">&#9776;</div>
         </div>
-    </div>
         <nav class="navigation">
             <ul>
-                <li>
-                    <a href="../home-page/index.html">
-                        <span> Home</span>
-                    </a>   
-                </li>
-                <li>
-                    <a href="../event-page/event.html">
-                        <span> Event</span>
-                    </a>   
-                </li>
-                <li>
-                    <a href="../Destinations.html">
-                        <span>Destination</span>
-                    </a>   
-                </li>
-                <li>
-                    <a href="./planner.html">
-                        <span> Planner</span>
-                    </a>   
-                </li>
-                <li>
-                    <a href="../blog-page/blog.html">
-                        <span> Blog</span>
-                    </a>   
-                </li>
-
+                <li><a href="home.html"><span> Home</span></a></li>
+                <li><a href="Event.html"><span> Event</span></a></li>
+                <li><a href="Destination.html"><span>Destination</span></a></li>
+                <li><a href="new planner.html"><span> Planner</span></a></li>
+                <li><a href="Blog.html"><span> Blog</span></a></li>
             </ul>
         </nav>   
     </header>
+
     <div class="container2E">
+        <div class="titleE">
+            <h4>Title</h4>
+            <input type="text" name="title" placeholder="Enter trip title" required>
+        </div>
         <div class="DateE">
-            <button class="btn2E"><img src="images/icon2.jpg" alt="calander icon"></button>
+            <button class="btn2E"><img src="images/icon2.jpg" alt="calendar icon"></button>
             <h4>Date</h4>
             <div class="inputdateE">
-                <input type="date" name="begin" placeholder="dd-mm-yyyy" value="">
+                <input type="date" name="begin" placeholder="dd-mm-yyyy" required>
             </div>
         </div>
         <div class="durationE">
@@ -67,12 +49,12 @@
                 </div>
             </div>
         </div>
-        <div class="desinationE">
-            <button class="btn3E"><img src="images/icon3.jpg" alt="destinaton icon"></button>
+        <div class="destinationE">
+            <button class="btn3E"><img src="images/icon3.jpg" alt="destination icon"></button>
             <h4>Destination</h4>
             <div class="inputdestination">
                 <label for="place-dropdown">Select Place:</label>
-                <select id="place-dropdown">
+                <select id="place-dropdown" required>
                     <option value="" disabled selected>Select a place</option>
                     <option value="Entoto park">Entoto park</option>
                     <option value="Lalibela">Lalibela</option>
@@ -84,8 +66,74 @@
             </div>
         </div>
 
-            <button class="btn5E"id="saveButton">Save</button>
+        <button class="btn5E" id="saveButton">Save</button>
     </div>
-    <script src="script.js"></script>   
+
+    <script>
+	document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger-menu');
+    const nav = document.querySelector('.navigation');
+
+    hamburger.addEventListener('click', function() {
+        nav.classList.toggle('active');
+    
+    });
+});
+document.getElementById('saveButton').addEventListener('click', function() {
+    window.location.href = 'plan drafts.html'; 
+});
+
+       document.getElementById('saveButton').addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    // Retrieve token from local storage
+    const yourToken = localStorage.getItem('token');
+    if (!yourToken) {
+        alert("Token is not available. Please log in.");
+        return; // Stop further execution
+    }
+
+    // Get form values
+    const title = document.querySelector('input[name="title"]').value;
+    const startDate = document.querySelector('input[name="begin"]').value;
+    const startTime = document.getElementById('start-time').value;
+    const endTime = document.getElementById('end-time').value;
+    const destination = document.getElementById('place-dropdown').value;
+
+    const data = {
+        title,
+        startDate: `${startDate}T${startTime}`,
+        endDate: `${startDate}T${endTime}`,
+        destinations: [destination],
+    };
+
+    try {
+        const response = await fetch('/api/trip-plans', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${yourToken}` // Token is now defined
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Trip plan saved successfully!');
+            // Optionally clear the form or redirect to another page
+            document.querySelector('input[name="title"]').value = '';
+            document.querySelector('input[name="begin"]').value = '';
+            document.getElementById('start-time').value = '';
+            document.getElementById('end-time').value = '';
+            document.getElementById('place-dropdown').selectedIndex = 0;
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to save trip plan');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('Error saving trip plan: ' + error.message);
+    }
+});
+    </script>
 </body>
 </html>

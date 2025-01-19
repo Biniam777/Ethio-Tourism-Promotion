@@ -63,7 +63,7 @@ header span{
 }
 .newplan,
 .plan{
-    background-image: url('images/tempo2.png');
+  
     background-size: cover;
     background-position: center;
     height: 100vh;
