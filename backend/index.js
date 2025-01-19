@@ -29,7 +29,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Get MongoDB connection URI from .env file
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = "mongodb://localhost:27017/";
 
 // Middleware
 app.use(bodyParser.json());
@@ -41,7 +41,7 @@ mongoose.connect(MONGO_URI, {
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
-    process.exit(1); // Exit the application if connection fails
+   // Exit the application if connection fails
   });
 
 // Define a test route
