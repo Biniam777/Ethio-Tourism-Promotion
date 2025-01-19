@@ -57,6 +57,16 @@ class BlogPost {
       res.status(400).json({ message: error.message });
     }
   }
+  // Get all blog posts
+static async getAllPosts(req, res) {
+  try {
+    const blogPosts = await BlogPostModel.find();
+    res.status(200).json(blogPosts);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
 }
 
 module.exports = BlogPost;
