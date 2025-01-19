@@ -1,13 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Define Event schema
 const eventSchema = new mongoose.Schema({
-  eventId: { type: Number, required: true },
+  eventId: { type: Number, unique: true }, 
   title: { type: String, required: true },
   content: { type: String, required: true },
   author: { type: String, required: true },
   category: { type: String, required: true },
   publishDate: { type: Date, default: Date.now },
+  location: { type: String },
+});
+
+
+eventSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    const latestEvent = await mongoose
+      .model("Event")
+      .findOne()
+      .sort("-eventId"); 
+    this.eventId = latestEvent ? latestEvent.eventId + 1 : 1; 
+  }
+  next();
 });
 
 // Define methods
@@ -23,6 +36,7 @@ eventSchema.methods.getDetail = function () {
     author: this.author,
     category: this.category,
     publishDate: this.publishDate,
+    eventId: this.eventId, // Now eventId is auto-generated
   };
 };
 
@@ -40,6 +54,6 @@ eventSchema.statics.getByLocation = function (location) {
 };
 
 // Create model
-const Event = mongoose.model('Event', eventSchema);
+const Event = mongoose.model("Event", eventSchema);
 
 module.exports = Event;

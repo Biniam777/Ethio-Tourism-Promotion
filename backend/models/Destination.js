@@ -1,14 +1,39 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+
+// Counter schema for auto-generating IDs
+const counterSchema = new mongoose.Schema({
+  key: { type: String, required: true },
+  count: { type: Number, default: 0 },
+});
+
+const Counter = mongoose.model("Counter", counterSchema);
 
 // Define Destination schema
 const destinationSchema = new mongoose.Schema({
-  destinationID: { type: Number, required: true },
+  destinationID: { type: Number, unique: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
   location: { type: String, required: true },
   image: { type: String, required: true },
   entryFee: { type: Number, required: true },
   category: { type: String, required: true },
+});
+
+// Pre-save hook to auto-generate destinationID
+destinationSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    try {
+      const counter = await Counter.findOneAndUpdate(
+        { key: "destinationID" },
+        { $inc: { count: 2 } },
+        { new: true, upsert: true } // Create the counter document if it doesn't exist
+      );
+      this.destinationID = counter.count;
+    } catch (error) {
+      return next(error);
+    }
+  }
+  next();
 });
 
 // Define methods
@@ -41,6 +66,6 @@ destinationSchema.statics.getAvailableDestinations = function () {
 };
 
 // Create model
-const Destination = mongoose.model('Destination', destinationSchema);
+const Destination = mongoose.model("Destination", destinationSchema);
 
 module.exports = Destination;
